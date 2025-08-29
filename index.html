@@ -3,194 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>طراح مدار سنگ شکن (نسخه شبیه‌ساز دقیق)</title>
+    <title>طراح مدار سنگ شکن (نسخه شبیه‌ساز پیشرفته)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            color: #1f2937;
         }
         .card {
-            background-color: white;
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
         }
         .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 15px;
+            line-height: 1.5;
         }
         .btn-primary {
-            background-color: #2563eb;
+            background: linear-gradient(to right, #3b82f6, #2563eb);
             color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         .btn-primary:hover {
-            background-color: #1d4ed8;
+            background: linear-gradient(to right, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px);
         }
         .btn-secondary {
-            background-color: #e5e7eb;
+            background: linear-gradient(to right, #e5e7eb, #d1d5db);
             color: #374151;
+            box-shadow: 0 4px 12px rgba(156, 163, 175, 0.2);
         }
         .btn-secondary:hover {
-            background-color: #d1d5db;
+            background: linear-gradient(to right, #d1d5db, #bfdbfe);
+            box-shadow: 0 6px 16px rgba(156, 163, 175, 0.3);
+            transform: translateY(-2px);
         }
         .input-field {
             width: 100%;
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: 12px;
             border: 1px solid #d1d5db;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            background: #fafafa;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         .input-field:focus {
             outline: none;
             border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: #ffffff;
         }
         .stage-card {
-            border-right: 4px solid;
+            border-right: 6px solid;
             animation: fadeIn 0.5s ease-out;
+            border-radius: 16px;
+            background: #ffffff;
+            overflow: hidden;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Tab Styles */
         .tab-btn {
-            padding: 8px 16px;
+            padding: 12px 24px;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 16px;
+            color: #4b5563;
         }
         .tab-btn.active {
             border-bottom-color: #2563eb;
             color: #2563eb;
-            font-weight: 600;
         }
-        .tab-panel {
-            display: none;
-        }
+        .tab-panel { display: none; }
         .tab-panel.active {
             display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .metric-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+        .metric-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: #1e293b;
+        }
+        .metric-label {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .section-header {
+            position: relative;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #2563eb, #60a5fa);
+            border-radius: 4px;
+        }
+        .psd-row {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        .psd-row:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        .remove-row {
+            color: #ef4444;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        .remove-row:hover {
+            opacity: 1;
+            transform: scale(1.15);
+        }
+        .schematic-container {
+            min-height: 450px;
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .schematic-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .stage-indicator {
+            display: inline-flex;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #475569;
+            text-align: center;
+            line-height: 28px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .crusher-icon {
+            background: #dbeafe;
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        .report-table th {
+            background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+            padding: 16px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .report-table td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+        .report-table tr:last-child td { border-bottom: none; }
+        .report-table tr:hover { background-color: #f1f5f9; }
+        .info-tooltip {
+            position: relative;
+            display: inline-flex;
+            cursor: help;
+        }
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 130%;
+            right: 50%;
+            transform: translateX(50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            font-size: 13px;
+            line-height: 1.5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(50%) translateY(-4px);
+        }
+        .equipment-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .equipment-table th, .equipment-table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 13px;
+        }
+        .equipment-table th {
+            background: #e5e7eb;
+            font-weight: 600;
+        }
+        .chart-summary-table {
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 13px;
+            border-collapse: collapse;
+        }
+        .chart-summary-table th, .chart-summary-table td {
+            padding: 6px 10px;
+            border: 1px solid #e5e7eb;
+            text-align: right;
+        }
+        .chart-summary-table th {
+            background-color: #f9fafb;
+            font-weight: 600;
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
-
-    <div id="app" class="container mx-auto p-4 md:p-6">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">شبیه‌ساز و طراح مدار سنگ شکن</h1>
-            <p class="mt-2 text-lg text-gray-600">طراحی دقیق بر اساس پارامترهای فرآیند و اهداف تولید</p>
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-3xl p-8 mb-8 shadow-2xl">
+                <h1 class="text-3xl md:text-4xl font-bold mb-3 tracking-tight">شبیه‌ساز و طراح مدار سنگ شکن پیشرفته</h1>
+                <p class="mt-2 text-lg opacity-90 max-w-3xl mx-auto">طراحی دقیق و بهینه مدارهای خردایش با تحلیل پیشرفته فرآیند، تولید و اقتصاد</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="metric-card">
+                    <div class="metric-label flex items-center justify-center">
+                        <span>ظرفیت کارخانه</span>
+                        <div class="info-tooltip mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="tooltip-text">ظرفیت کارخانه بر اساس پارامترهای ورودی و ضریب دسترسی محاسبه می‌شود</span>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="plant-capacity">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label flex items-center justify-center">
+                        <span>ساعت کار مفید</span>
+                        <div class="info-tooltip mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="tooltip-text">ساعت کار مفید = تعداد شیفت × ساعت هر شیفت × ضریب دسترسی</span>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="effective-hours">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label flex items-center justify-center">
+                        <span>توان کل مدار</span>
+                        <div class="info-tooltip mr-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="tooltip-text">مجموع توان موتورهای تمام مراحل خردایش</span>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="total-power">-</div>
+                </div>
+            </div>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <!-- Left Column: Inputs and Controls -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Feed Data Input Card -->
+        <main class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div class="lg:col-span-2 space-y-8">
                 <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">۱. داده‌های ورودی و اهداف</h2>
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">۱. داده‌های ورودی و اهداف</h2>
+                    </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
-                            <label for="daily-capacity" class="block font-medium mb-1">ظرفیت روزانه (تن)</label>
-                            <input type="number" id="daily-capacity" class="input-field" value="900">
+                            <label for="daily-capacity" class="block font-medium mb-2 text-sm">ظرفیت روزانه (تن)</label>
+                            <input type="number" id="daily-capacity" class="input-field" value="900" min="1">
                         </div>
                         <div>
-                            <label for="work-hours" class="block font-medium mb-1">ساعت کار روزانه</label>
-                            <input type="number" id="work-hours" class="input-field" value="8">
+                            <label for="shifts" class="block font-medium mb-2 text-sm">تعداد شیفت</label>
+                            <input type="number" id="shifts" class="input-field" value="1" min="1" max="3">
                         </div>
                         <div>
-                            <label for="bulk-density" class="block font-medium mb-1">چگالی ظاهری (t/m³)</label>
-                            <input type="number" id="bulk-density" class="input-field" value="1.8">
+                            <label for="hours-per-shift" class="block font-medium mb-2 text-sm">ساعت کار هر شیفت</label>
+                            <input type="number" id="hours-per-shift" class="input-field" value="8" min="1" max="24">
                         </div>
                         <div>
-                            <label for="bond-work-index" class="block font-medium mb-1">شاخص کار (Wi)</label>
-                            <input type="number" id="bond-work-index" class="input-field" value="12.5">
+                            <label for="accessibility-factor" class="block font-medium mb-2 text-sm">ضریب دسترسی (%)</label>
+                            <input type="number" id="accessibility-factor" class="input-field" value="75" min="1" max="100">
                         </div>
-                         <div class="md:col-span-2">
-                            <label for="target-p100" class="block font-medium mb-1">بزرگترین سایز محصول (mm)</label>
-                            <input type="number" id="target-p100" class="input-field" value="25">
+                        <div>
+                            <label for="bulk-density" class="block font-medium mb-2 text-sm">چگالی ظاهری (t/m³)</label>
+                            <input type="number" id="bulk-density" class="input-field" value="1.8" min="0.1" step="0.1">
+                        </div>
+                        <div>
+                            <label for="bond-work-index" class="block font-medium mb-2 text-sm">شاخص کار باند (Wi)</label>
+                            <input type="number" id="bond-work-index" class="input-field" value="12.5" min="0.1" step="0.1">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="target-p100" class="block font-medium mb-2 text-sm">بزرگترین سایز محصول نهایی (mm)</label>
+                            <input type="number" id="target-p100" class="input-field" value="25" min="0.1" step="0.1">
                         </div>
                     </div>
 
-                    <h3 class="font-semibold mb-2 text-gray-700">داده‌های دانه‌بندی خوراک</h3>
-                    <div id="psd-input-rows" class="space-y-3 mb-4">
-                        <!-- Dynamic rows for size/passing % will be added here -->
+                    <div class="section-header">
+                        <h3 class="font-bold text-gray-700 text-lg">دانه‌بندی خوراک</h3>
                     </div>
+                    <div id="psd-input-rows" class="space-y-4 mb-6"></div>
                     <div class="flex items-center gap-4">
-                        <button id="add-row-btn" class="btn btn-secondary flex-grow">افزودن نقطه</button>
-                        <button id="auto-design-btn" class="btn btn-primary flex-grow">طراحی خودکار مدار</button>
+                        <button id="add-row-btn" class="btn btn-secondary flex-grow">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                            افزودن نقطه
+                        </button>
+                        <button id="auto-design-btn" class="btn btn-primary flex-grow">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                            طراحی خودکار مدار
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Results and Chart -->
-            <div class="lg:col-span-3 space-y-6">
-                <!-- Results Card -->
+            <div class="lg:col-span-3 space-y-8">
                 <div class="card">
-                     <h2 class="text-xl font-bold mb-2 border-b pb-2">۲. نتایج طراحی خودکار</h2>
-                     <div id="summary-display" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-sm font-semibold bg-blue-50 text-blue-800 p-3 rounded-lg mb-4 hidden">
-                     </div>
-                     
-                     <!-- Tabs -->
-                     <div id="tabs-container" class="mt-4 hidden">
-                         <div class="border-b border-gray-200">
-                             <nav class="flex -mb-px" id="tabs">
-                                 <button class="tab-btn active" data-tab="results-panel">نتایج جزئی</button>
-                                 <button class="tab-btn" data-tab="schematic-panel">شماتیک مدار</button>
-                             </nav>
-                         </div>
-                         <div id="results-panel" class="tab-panel active py-4">
-                             <div id="stages-container" class="space-y-4">
-                                 <p id="start-message" class="text-center text-gray-500 py-8">برای شروع، پارامترهای فرآیند را وارد کرده و دکمه طراحی خودکار را بزنید.</p>
-                             </div>
-                         </div>
-                         <div id="schematic-panel" class="tab-panel py-4">
-                            <div id="schematic-container" class="w-full bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                                <!-- SVG Schematic will be drawn here -->
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">۲. نتایج طراحی خودکار</h2>
+                    </div>
+                    
+                    <div id="tabs-container" class="mt-6 hidden">
+                        <div class="border-b border-gray-200">
+                            <nav class="flex -mb-px" id="tabs">
+                                <button class="tab-btn active" data-tab="results-panel">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                    نتایج جزئی
+                                </button>
+                                <button class="tab-btn" data-tab="schematic-panel">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
+                                    شماتیک مدار
+                                </button>
+                            </nav>
+                        </div>
+                        <div id="results-panel" class="tab-panel active py-6">
+                            <div id="stages-container" class="space-y-6">
+                                <p id="start-message" class="text-center text-gray-500 py-10">برای شروع، پارامترهای فرآیند را وارد کرده و دکمه طراحی خودکار را بزنید.</p>
                             </div>
-                         </div>
-                     </div>
+                        </div>
+                        <div id="schematic-panel" class="tab-panel py-6">
+                            <div id="schematic-container" class="schematic-container"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Chart Card -->
                 <div id="chart-card" class="card hidden">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">نمودار دانه‌بندی</h2>
-                    <canvas id="psd-chart"></canvas>
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">نمودار دانه‌بندی و تحلیل</h2>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <canvas id="psd-chart" style="height: 350px;"></canvas>
+                    </div>
+                    <div id="chart-summary-container" class="mt-4 space-y-4"></div>
                 </div>
 
-                <!-- Final Report Card -->
+                <div id="mass-balance-card" class="card hidden">
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">جدول موازنه جرم</h2>
+                    </div>
+                    <div id="mass-balance-container" class="overflow-x-auto"></div>
+                </div>
+
+                <div id="size-analysis-card" class="card hidden">
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">جدول تحلیل ابعادی</h2>
+                    </div>
+                    <div id="size-analysis-container" class="overflow-x-auto"></div>
+                </div>
+
+                <div id="equipment-card" class="card hidden">
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">۳. انتخاب و مشخصات تجهیزات</h2>
+                    </div>
+                    <div id="equipment-container" class="space-y-4"></div>
+                </div>
+
                 <div id="report-card" class="card hidden">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">گزارش نهایی (خروجی اکسل)</h2>
+                    <div class="section-header">
+                        <h2 class="text-xl font-bold">گزارش نهایی</h2>
+                    </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-center text-sm">
-                            <thead class="bg-gray-100">
+                        <table class="w-full text-center text-sm report-table">
+                            <thead>
                                 <tr>
-                                    <th class="p-2 font-semibold">مرحله</th>
-                                    <th class="p-2 font-semibold">ظرفیت (tph)</th>
-                                    <th class="p-2 font-semibold">ظرفیت (m³/h)</th>
-                                    <th class="p-2 font-semibold">توان موتور (kW)</th>
-                                    <th class="p-2 font-semibold">توان ویژه (kWh/t)</th>
-                                    <th class="p-2 font-semibold">دهانه (mm)</th>
-                                    <th class="p-2 font-semibold">گلوگاه (mm)</th>
-                                    <th class="p-2 font-semibold">نوع مدار</th>
+                                    <th>مرحله</th>
+                                    <th>ظرفیت (tph)</th>
+                                    <th>ظرفیت (m³/h)</th>
+                                    <th>توان موتور (kW)</th>
+                                    <th>توان ویژه (kWh/t)</th>
+                                    <th>دهانه (mm)</th>
+                                    <th>گلوگاه (mm)</th>
+                                    <th>نوع مدار</th>
                                 </tr>
                             </thead>
-                            <tbody id="report-table-body">
-                                <!-- Table rows will be populated here -->
-                            </tbody>
+                            <tbody id="report-table-body"></tbody>
                         </table>
                     </div>
-                    <button id="download-csv-btn" class="btn btn-secondary w-full mt-4">دانلود گزارش (CSV)</button>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">مجموع توان مدار:</p>
+                            <p class="font-bold text-lg" id="total-power-report">0 kW</p>
+                        </div>
+                        <button id="download-csv-btn" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            دانلود گزارش (CSV)
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
@@ -198,83 +475,168 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
     const psdInputRows = document.getElementById('psd-input-rows');
     const addRowBtn = document.getElementById('add-row-btn');
     const autoDesignBtn = document.getElementById('auto-design-btn');
-    const summaryDisplay = document.getElementById('summary-display');
     const stagesContainer = document.getElementById('stages-container');
     const startMessage = document.getElementById('start-message');
     const chartCard = document.getElementById('chart-card');
+    const equipmentCard = document.getElementById('equipment-card');
+    const equipmentContainer = document.getElementById('equipment-container');
     const reportCard = document.getElementById('report-card');
     const reportTableBody = document.getElementById('report-table-body');
     const downloadCsvBtn = document.getElementById('download-csv-btn');
-    const bondWorkIndexInput = document.getElementById('bond-work-index');
     const dailyCapacityInput = document.getElementById('daily-capacity');
-    const workHoursInput = document.getElementById('work-hours');
+    const shiftsInput = document.getElementById('shifts');
+    const hoursPerShiftInput = document.getElementById('hours-per-shift');
+    const accessibilityFactorInput = document.getElementById('accessibility-factor');
     const bulkDensityInput = document.getElementById('bulk-density');
+    const bondWorkIndexInput = document.getElementById('bond-work-index');
     const targetP100Input = document.getElementById('target-p100');
     const tabsContainer = document.getElementById('tabs-container');
     const tabs = document.getElementById('tabs');
     const tabPanels = document.querySelectorAll('.tab-panel');
+    const plantCapacityElement = document.getElementById('plant-capacity');
+    const effectiveHoursElement = document.getElementById('effective-hours');
+    const totalPowerElement = document.getElementById('total-power');
+    const totalPowerReportElement = document.getElementById('total-power-report');
+    const chartSummaryContainer = document.getElementById('chart-summary-container');
+    const massBalanceCard = document.getElementById('mass-balance-card');
+    const massBalanceContainer = document.getElementById('mass-balance-container');
+    const sizeAnalysisCard = document.getElementById('size-analysis-card');
+    const sizeAnalysisContainer = document.getElementById('size-analysis-container');
 
-    // --- State ---
     let chartInstance = null;
     let stagesData = [];
-    const stageColors = ['#3b82f6', '#ef4444', '#10b981', '#eab308', '#8b5cf6'];
+    const stageColors = ['#3b82f6', '#ef4444', '#10b981', '#eab308', '#8b5cf6', '#ec4899', '#f97316'];
+    
+    const equipmentData = {
+        jaw: [
+            { model: 'F-1500x1200', gape: 1200, maxFeed: 1020, cssRange: [150, 300], capacityRange: [400, 850], kw: 250 },
+            { model: 'F-1200x900', gape: 900, maxFeed: 750, cssRange: [75, 200], capacityRange: [130, 360], kw: 132 },
+            { model: 'F-1100x800', gape: 800, maxFeed: 680, cssRange: [75, 180], capacityRange: [120, 300], kw: 110 },
+            { model: 'F-1000x750', gape: 750, maxFeed: 630, cssRange: [75, 175], capacityRange: [110, 260], kw: 90 },
+            { model: 'F-900x600', gape: 600, maxFeed: 500, cssRange: [65, 150], capacityRange: [65, 180], kw: 75 },
+            { model: 'F-800x550', gape: 550, maxFeed: 450, cssRange: [55, 130], capacityRange: [50, 150], kw: 55 },
+            { model: 'F-750x500', gape: 500, maxFeed: 420, cssRange: [50, 125], capacityRange: [45, 120], kw: 55 },
+            { model: 'F-600x400', gape: 400, maxFeed: 340, cssRange: [40, 100], capacityRange: [25, 70], kw: 37 },
+            { model: 'F-500x300', gape: 300, maxFeed: 250, cssRange: [25, 80], capacityRange: [15, 50], kw: 30 },
+            { model: 'F-400x250', gape: 250, maxFeed: 210, cssRange: [20, 60], capacityRange: [8, 35], kw: 22 }
+        ],
+        cone: [
+            { model: 'CS-7', type: 'Standard', maxFeed: 370, cssRange: [25, 60], capacityRange: [450, 1100], kw: 315 },
+            { model: 'CS-5.5', type: 'Standard', maxFeed: 230, cssRange: [19, 51], capacityRange: [220, 480], kw: 220 },
+            { model: 'CH-4.5', type: 'Standard', maxFeed: 185, cssRange: [13, 38], capacityRange: [140, 300], kw: 160 },
+            { model: 'CS-4', type: 'Standard', maxFeed: 160, cssRange: [13, 32], capacityRange: [90, 210], kw: 132 },
+            { model: 'CS-3', type: 'Standard', maxFeed: 125, cssRange: [10, 25], capacityRange: [60, 130], kw: 90 },
+            { model: 'CS-2', type: 'Standard', maxFeed: 90, cssRange: [8, 19], capacityRange: [20, 70], kw: 55 },
+            { model: 'CH-7 SH', type: 'Short Head', maxFeed: 180, cssRange: [10, 38], capacityRange: [300, 750], kw: 315 },
+            { model: 'CH-5.5 SH', type: 'Short Head', maxFeed: 130, cssRange: [8, 32], capacityRange: [150, 400], kw: 220 },
+            { model: 'CS-4 SH', type: 'Short Head', maxFeed: 100, cssRange: [6, 25], capacityRange: [60, 160], kw: 132 },
+            { model: 'CH-430', type: 'Short Head', maxFeed: 90, cssRange: [6, 25], capacityRange: [50, 150], kw: 110 },
+            { model: 'CS-3 SH', type: 'Short Head', maxFeed: 60, cssRange: [5, 19], capacityRange: [25, 80], kw: 75 },
+            { model: 'CS-2 SH', type: 'Short Head', maxFeed: 45, cssRange: [3, 13], capacityRange: [15, 50], kw: 55 }
+        ]
+    };
+    
+    const findClosestEquipment = (crusherType, requiredCapacity, requiredPower, css) => {
+        const table = equipmentData[crusherType] || [];
+        
+        const suitableEquipment = table.filter(item => 
+            item.kw >= requiredPower &&
+            css >= item.cssRange[0] && 
+            css <= item.cssRange[1] &&
+            requiredCapacity >= item.capacityRange[0] * 0.7 && 
+            requiredCapacity <= item.capacityRange[1] * 1.5
+        );
 
-    // --- Functions ---
+        if (suitableEquipment.length > 0) {
+            return suitableEquipment.sort((a, b) => a.kw - b.kw)[0];
+        } else {
+            const powerSufficient = table.filter(item => item.kw >= requiredPower);
+            if (powerSufficient.length > 0) {
+                return powerSufficient.sort((a,b) => a.kw - b.kw)[0];
+            }
+        }
+        return null;
+    };
 
     const addPsdRow = (size = '', percent = '') => {
         const rowCount = psdInputRows.children.length;
         const row = document.createElement('div');
-        row.className = 'flex items-center gap-2';
+        row.className = 'psd-row flex items-center gap-3 border border-gray-200 rounded-lg p-3';
         row.innerHTML = `
-            <label class="w-1/4 text-sm">نقطه ${rowCount + 1}:</label>
-            <input type="number" placeholder="اندازه (mm)" class="input-field w-1/2" value="${size}">
-            <input type="number" placeholder="درصد عبوری (%)" class="input-field w-1/2" value="${percent}">
+            <div class="stage-indicator">${rowCount + 1}</div>
+            <div class="flex-1">
+                <input type="number" placeholder="اندازه (mm)" class="input-field size-input" value="${size}" min="0.1" step="0.1">
+            </div>
+            <div class="flex-1">
+                <input type="number" placeholder="درصد عبوری (%)" class="input-field percent-input" value="${percent}" min="0" max="100">
+            </div>
+            <div class="remove-row">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
         `;
         psdInputRows.appendChild(row);
+        row.querySelector('.remove-row').addEventListener('click', () => {
+            row.remove();
+            updateRowIndicators();
+        });
+    };
+    
+    const updateRowIndicators = () => {
+        const rows = psdInputRows.querySelectorAll('.psd-row');
+        rows.forEach((row, index) => {
+            row.querySelector('.stage-indicator').textContent = index + 1;
+        });
     };
 
-    const interpolateValue = (x_points, y_points, target_x) => {
-        if (x_points.length < 2) return null;
-        let index1 = -1, index2 = -1;
-        for (let i = 0; i < x_points.length - 1; i++) {
-            if (x_points[i] <= target_x && x_points[i+1] >= target_x) {
-                index1 = i;
-                index2 = i + 1;
-                break;
-            }
-        }
-        if (index1 === -1) {
-            if (target_x < x_points[0]) { index1 = 0; index2 = 1; }
-            else { index1 = x_points.length - 2; index2 = x_points.length - 1; }
-        }
-        const x1 = x_points[index1], x2 = x_points[index2];
-        const y1 = y_points[index1], y2 = y_points[index2];
+    const interpolateYfromX = (x_series, y_series, target_x) => {
+        if (x_series.length < 2) return null;
+        let i = 0;
+        while (i < x_series.length && x_series[i] < target_x) { i++; }
+        if (i === 0) return y_series[0];
+        if (i === x_series.length) return y_series[x_series.length - 1];
+        const x1 = x_series[i-1], x2 = x_series[i];
+        const y1 = y_series[i-1], y2 = y_series[i];
         if (x1 === x2) return y1;
         return y1 + (y2 - y1) * (target_x - x1) / (x2 - x1);
+    };
+
+    const interpolateXfromY = (x_series, y_series, target_y) => {
+        if (y_series.length < 2) return null;
+        let i = 0;
+        while (i < y_series.length && y_series[i] < target_y) { i++; }
+        if (i === 0) return x_series[0];
+        if (i === y_series.length) return x_series[y_series.length - 1];
+        const x1 = x_series[i-1], x2 = x_series[i];
+        const y1 = y_series[i-1], y2 = y_series[i];
+        if (y1 === y2) return x1;
+        return x1 + (x2 - x1) * (target_y - y1) / (y2 - y1);
     };
 
     const calculateSpecificPower = (wi, f80, p80) => {
         const f80_micron = f80 * 1000;
         const p80_micron = p80 * 1000;
-        if (f80_micron <= 0 || p80_micron <= 0) return 0;
+        if (f80_micron <= 0 || p80_micron <= 0 || f80_micron <= p80_micron) return 0;
+        // Use 11 as the constant for metric tonnes, as per standard Bond's Law correction.
         return 11 * wi * (1 / Math.sqrt(p80_micron) - 1 / Math.sqrt(f80_micron));
     };
-    
+
     const calculateCorrectedPower = (specificPower, tph, crusherType) => {
+        // Correction factors based on the provided PDF document.
         const correctionFactors = { 'jaw': 2.0, 'cone': 1.3 };
         const factor = correctionFactors[crusherType] || 1.0;
         return specificPower * tph * factor;
     };
-
+    
     const generateGaudinPSD = (p80, gaudin_a) => {
-        const k = p80 / Math.pow(0.8, 1 / gaudin_a); // Calculate k (top size) from P80
+        const k = p80 / Math.pow(0.8, 1 / gaudin_a);
         const data = [];
         const startSize = 0.1;
-        const endSize = k * 1.1; // Extend slightly beyond top size for plotting
+        const endSize = k * 1.1;
         for (let i = 0; i < 100; i++) {
             const size = startSize * Math.pow(endSize / startSize, i / 99);
             let passing = 100 * Math.pow(size / k, gaudin_a);
@@ -286,236 +648,393 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setupChart = (feedData) => {
         chartCard.classList.remove('hidden');
+        chartSummaryContainer.innerHTML = '';
         const ctx = document.getElementById('psd-chart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: { datasets: [{
-                label: 'خوراک اولیه', data: feedData, borderColor: '#4b5563',
-                backgroundColor: 'rgba(75, 85, 99, 0.1)', borderDash: [5, 5],
-                fill: false, pointRadius: 4, pointBackgroundColor: '#4b5563',
-            }]},
-            options: {
-                responsive: true, maintainAspectRatio: true,
-                scales: {
-                    x: { type: 'logarithmic', title: { display: true, text: 'اندازه ذرات (mm)', font: { family: 'Vazirmatn' }}},
-                    y: { min: 0, max: 100, title: { display: true, text: 'درصد تجمعی عبوری (%)', font: { size: 14, family: 'Vazirmatn' }}}
-                },
-                plugins: {
-                    legend: { position: 'top', labels: { font: { family: 'Vazirmatn' }}},
-                    tooltip: { callbacks: {
-                        title: (tooltipItems) => `اندازه: ${tooltipItems[0].raw.x.toFixed(2)} mm`,
-                        label: (tooltipItem) => `عبوری: ${tooltipItem.raw.y.toFixed(2)} %`
-                    }}
-                }
-            }
-        });
+        const options = {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                x: { type: 'logarithmic', title: { display: true, text: 'اندازه ذرات (mm)', font: { family: 'Vazirmatn', size: 15, weight: '500' } }, grid: { color: 'rgba(107, 114, 128, 0.1)' } },
+                y: { min: 0, max: 100, title: { display: true, text: 'درصد تجمعی عبوری (%)', font: { size: 15, family: 'Vazirmatn', weight: '500' } }, grid: { color: 'rgba(107, 114, 128, 0.1)' } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { font: { family: 'Vazirmatn', size: 13 }, padding: 20, usePointStyle: true, pointStyle: 'circle' } },
+                tooltip: { backgroundColor: 'rgba(30, 41, 59, 0.95)', padding: 12, titleFont: { size: 14, family: 'Vazirmatn' }, bodyFont: { size: 13, family: 'Vazirmatn' }, callbacks: { title: (tooltipItems) => `اندازه: ${tooltipItems[0].raw.x.toFixed(2)} mm`, label: (tooltipItem) => `عبوری: ${tooltipItem.raw.y.toFixed(2)} %` } }
+            },
+            animation: { duration: 1200, easing: 'easeOutQuart' }
+        };
+        chartInstance = new Chart(ctx, { type: 'line', data: { datasets: [{ label: 'خوراک اولیه', data: feedData, borderColor: '#4b5563', backgroundColor: 'rgba(75, 85, 99, 0.1)', borderDash: [5, 5], fill: false, pointRadius: 4, pointBackgroundColor: '#4b5563', tension: 0.3, borderWidth: 2.5 }] }, options: options });
     };
 
-    const addDataToChart = (stage) => {
+    const addDataToChart = (stage, color) => {
         if (!chartInstance) return;
-        const p80 = stage['P80 خروجی (mm)'];
-        const gaudin_a = stage.crusherType === 'jaw' ? 0.88 : 0.87;
-        const data = generateGaudinPSD(p80, gaudin_a);
+        const data = stage.psdSummary.productPSD;
         const label = `محصول ${stage['مرحله']}`;
-        const colorIndex = (stagesData.length - 1) % stageColors.length;
-        chartInstance.data.datasets.push({
-            label: label, data: data, borderColor: stageColors[colorIndex],
-            backgroundColor: 'transparent', fill: false, pointRadius: 0, borderWidth: 2,
-        });
+        chartInstance.data.datasets.push({ label: label, data: data, borderColor: color, backgroundColor: 'transparent', fill: false, pointRadius: 0, borderWidth: 3, tension: 0.3 });
         chartInstance.update();
     };
 
-    const displayStage = (stage) => {
+    const displayChartSummary = (stage, color) => {
+        const summary = stage.psdSummary;
+        const table = document.createElement('table');
+        table.className = 'chart-summary-table';
+        table.style.borderColor = color;
+        const throatSizeText = (stage['گلوگاه (mm)'] !== null && typeof stage['گلوگاه (mm)'] !== 'undefined') ? `(${stage['گلوگاه (mm)'].toFixed(1)}mm)` : '';
+        table.innerHTML = `
+            <thead>
+                <tr><th colspan="2" style="background-color: ${color}20; color: ${color};">تحلیل مرحله: ${stage['مرحله']}</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>F100 (بزرگترین سایز ورودی)</td><td>${summary.F100.toFixed(1)} mm</td></tr>
+                <tr><td>F80 (ورودی)</td><td>${summary.F80.toFixed(1)} mm</td></tr>
+                <tr><td>P80 (خروجی)</td><td>${summary.P80.toFixed(1)} mm</td></tr>
+                <tr><td>P100 (بزرگترین سایز خروجی)</td><td>${summary.P100.toFixed(1)} mm</td></tr>
+                <tr><td>درصد عبوری از گلوگاه ${throatSizeText}</td><td>${summary.percentBypass.toFixed(1)}%</td></tr>
+            </tbody>`;
+        chartSummaryContainer.appendChild(table);
+    };
+
+    const displayStage = (stage, index) => {
         const card = document.createElement('div');
-        const colorIndex = (stagesData.length - 1) % stageColors.length;
-        card.className = 'stage-card p-4 rounded-lg bg-gray-50';
+        const colorIndex = index % stageColors.length;
+        card.className = 'stage-card p-6 rounded-lg bg-white';
         card.style.borderRightColor = stageColors[colorIndex];
+        const crusherIcon = stage.crusherType === 'jaw' ? 
+            `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-blue-600"><path d="M10 16.5 3 21"/><path d="m3 14 7.5 7.5"/><path d="M14 16.5 21 21"/><path d="m21 14-7.5 7.5"/><path d="M10 16.5 14 16.5"/><path d="M4 11V4h16v7"/><path d="M4 4 12 11l8-7"/></svg>` :
+            `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-green-600"><path d="m21.44 11.05-9.19 9.19a6.003 6.003 0 1 1-8.49-8.49l9.19-9.19a4.002 4.002 0 1 1 5.66 5.66l-9.2 9.19a2.001 2.001 0 1 1-2.83-2.83l8.49-8.48"/></svg>`;
+        
+        let capacityHtml;
+        if (stage.crusherType === 'cone') {
+            capacityHtml = `
+                <div class="metric-card"><div class="metric-label">ظرفیت باز (tph)</div><div class="metric-value">${stage['ظرفیت مدار باز (tph)'].toFixed(1)}</div></div>
+                <div class="metric-card"><div class="metric-label">ظرفیت بسته (tph)</div><div class="metric-value">${stage['ظرفیت مدار بسته (tph)'].toFixed(1)}</div></div>
+            `;
+        } else {
+            capacityHtml = `
+                <div class="metric-card"><div class="metric-label">ظرفیت (tph)</div><div class="metric-value">${stage['ظرفیت ورودی (tph)'].toFixed(1)}</div></div>
+                <div class="metric-card"><div class="metric-label">ظرفیت (m³/h)</div><div class="metric-value">${stage['ظرفیت ورودی (m3/h)'].toFixed(1)}</div></div>
+            `;
+        }
         
         card.innerHTML = `
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-lg">${stage['مرحله']}</h3>
-                <span class="text-sm font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${stage['نوع مدار']}</span>
-            </div>
-            <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-                <div>
-                    <p class="text-xs text-gray-500">توان موتور</p>
-                    <p class="font-semibold text-base">${stage['توان موتور (kW)'].toFixed(1)} kW</p>
+            <div class="flex justify-between items-start">
+                <div class="flex items-center">
+                    <div class="crusher-icon" style="background-color: ${stageColors[colorIndex]}20;">${crusherIcon}</div>
+                    <div>
+                        <h3 class="font-bold text-lg flex items-center">
+                            <span class="stage-indicator" style="background-color: ${stageColors[colorIndex]}; color: white;">${index + 1}</span>
+                            ${stage['مرحله']}
+                        </h3>
+                        <span class="text-sm font-medium bg-gray-100 text-gray-600 px-3 py-1 rounded-full mt-2 inline-block">${stage['نوع مدار']}</span>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-xs text-gray-500">ظرفیت (tph)</p>
-                    <p class="font-semibold text-base">${stage['ظرفیت ورودی (tph)'].toFixed(1)}</p>
-                </div>
-                 <div>
-                    <p class="text-xs text-gray-500">ظرفیت (m³/h)</p>
-                    <p class="font-semibold text-base">${stage['ظرفیت ورودی (m3/h)'].toFixed(1)}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">گلوگاه</p>
-                    <p class="font-semibold text-base">${stage['گلوگاه (mm)'].toFixed(1)}</p>
-                </div>
-                 <div>
-                    <p class="text-xs text-gray-500">دهانه</p>
-                    <p class="font-semibold text-base">${stage['دهانه (mm)'] !== null ? stage['دهانه (mm)'].toFixed(1) : '---'}</p>
+                <div class="text-right">
+                    <span class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">${stage.crusherType === 'jaw' ? 'سنگ شکن فکی' : 'سنگ شکن مخروطی'}</span>
                 </div>
             </div>
-        `;
+            <div class="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="metric-card"><div class="metric-label">توان موتور</div><div class="metric-value">${stage['توان موتور (kW)'].toFixed(1)} kW</div></div>
+                ${capacityHtml}
+                <div class="metric-card"><div class="metric-label">گلوگاه</div><div class="metric-value">${stage['گلوگاه (mm)'].toFixed(1)} mm</div></div>
+                <div class="metric-card"><div class="metric-label">دهانه</div><div class="metric-value">${stage['دهانه (mm)'] !== null ? stage['دهانه (mm)'].toFixed(1) : '---'}</div></div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="metric-card"><div class="metric-label">F80 ورودی</div><div class="metric-value">${stage['F80 ورودی (mm)'].toFixed(1)} mm</div></div>
+                <div class="metric-card"><div class="metric-label">P80 خروجی</div><div class="metric-value">${stage['P80 خروجی (mm)'].toFixed(1)} mm</div></div>
+                <div class="metric-card"><div class="metric-label">نسبت خردایش</div><div class="metric-value">${stage['نسبت خردایش'].toFixed(1)}:1</div></div>
+                <div class="metric-card"><div class="metric-label">توان ویژه</div><div class="metric-value">${stage['توان (kWh/t)'].toFixed(3)}</div></div>
+            </div>`;
         stagesContainer.appendChild(card);
     };
     
+    const displayEquipment = (stage) => {
+        const closest = findClosestEquipment(stage.crusherType, stage['ظرفیت ورودی (tph)'], stage['توان موتور (kW)'], stage['گلوگاه (mm)']);
+        if (!closest) {
+            const card = document.createElement('div');
+            card.className = 'equipment-card';
+            card.innerHTML = `<h3 class="font-bold text-lg mb-2 text-red-600">تجهیز مناسبی برای ${stage['مرحله']} یافت نشد.</h3><p class="text-sm">لطفا پارامترهای ورودی را بازبینی کنید یا دیتابیس تجهیزات را گسترش دهید.</p>`;
+            equipmentContainer.appendChild(card);
+            return;
+        }
+        const card = document.createElement('div');
+        card.className = 'equipment-card';
+        card.innerHTML = `
+            <h3 class="font-bold text-lg mb-4">تجهیزات پیشنهادی برای ${stage['مرحله']}</h3>
+            <table class="equipment-table">
+                <tr><th>مدل</th><th>حداکثر خوراک (mm)</th><th>محدوده گلوگاه (mm)</th><th>محدوده ظرفیت (tph)</th><th>قدرت (kW)</th></tr>
+                <tr><td>${closest.model}</td><td>${closest.maxFeed}</td><td>${closest.cssRange.join(' - ')}</td><td>${closest.capacityRange.join(' - ')}</td><td>${closest.kw}</td></tr>
+            </table>`;
+        equipmentContainer.appendChild(card);
+    };
+
     const updateReportTable = () => {
         reportCard.classList.remove('hidden');
         reportTableBody.innerHTML = '';
+        let totalPower = 0;
         stagesData.forEach(stage => {
+            totalPower += stage['توان موتور (kW)'];
             const row = document.createElement('tr');
-            row.className = 'border-b';
             row.innerHTML = `
-                <td class="p-2">${stage['مرحله']}</td>
-                <td class="p-2">${stage['ظرفیت ورودی (tph)'].toFixed(2)}</td>
-                <td class="p-2">${stage['ظرفیت ورودی (m3/h)'].toFixed(2)}</td>
-                <td class="p-2">${stage['توان موتور (kW)'].toFixed(2)}</td>
-                <td class="p-2">${stage['توان (kWh/t)'].toFixed(3)}</td>
-                <td class="p-2">${stage['دهانه (mm)'] !== null ? stage['دهانه (mm)'].toFixed(1) : '---'}</td>
-                <td class="p-2">${stage['گلوگاه (mm)'].toFixed(1)}</td>
-                <td class="p-2">${stage['نوع مدار']}</td>
-            `;
+                <td class="p-4 font-medium">${stage['مرحله']}</td>
+                <td>${stage['ظرفیت ورودی (tph)'].toFixed(2)}</td>
+                <td>${stage['ظرفیت ورودی (m3/h)'].toFixed(2)}</td>
+                <td>${stage['توان موتور (kW)'].toFixed(2)}</td>
+                <td>${stage['توان (kWh/t)'].toFixed(3)}</td>
+                <td>${stage['دهانه (mm)'] !== null ? stage['دهانه (mm)'].toFixed(1) : '---'}</td>
+                <td>${stage['گلوگاه (mm)'].toFixed(1)}</td>
+                <td>${stage['نوع مدار']}</td>`;
             reportTableBody.appendChild(row);
         });
+        totalPowerReportElement.textContent = `${totalPower.toFixed(1)} kW`;
+    };
+
+    const displayMassBalanceTable = (stages) => {
+        if (!stages || stages.length === 0) {
+            massBalanceCard.classList.add('hidden');
+            return;
+        }
+        let tableHTML = `<table class="w-full text-center text-sm report-table"><thead><tr>
+            <th>مرحله</th>
+            <th>خوراک جدید (tph)</th>
+            <th>کنارگذر (tph)</th>
+            <th>بار در گردش (tph)</th>
+            <th>خوراک سنگ شکن (tph)</th>
+            <th>محصول نهایی مرحله (tph)</th>
+        </tr></thead><tbody>`;
+        stages.forEach(stage => {
+            const mb = stage.massBalance;
+            tableHTML += `<tr>
+                <td class="p-4 font-medium">${stage['مرحله']}</td>
+                <td>${mb.feedToStageTph.toFixed(2)}</td>
+                <td>${(mb.screenBypassTph || 0).toFixed(2)}</td>
+                <td>${(mb.circulatingLoadTph || 0).toFixed(2)}</td>
+                <td>${mb.crusherFeedTph.toFixed(2)}</td>
+                <td>${mb.productTph.toFixed(2)}</td>
+            </tr>`;
+        });
+        tableHTML += '</tbody></table>';
+        massBalanceContainer.innerHTML = tableHTML;
+        massBalanceCard.classList.remove('hidden');
+    };
+
+    const displaySizeAnalysisTable = (stages) => {
+        if (!stages || stages.length === 0) {
+            sizeAnalysisCard.classList.add('hidden');
+            return;
+        }
+        let tableHTML = `<table class="w-full text-center text-sm report-table"><thead><tr>
+            <th>مرحله</th>
+            <th>F100 (mm)</th>
+            <th>F80 (mm)</th>
+            <th>P80 (mm)</th>
+            <th>P100 (mm)</th>
+        </tr></thead><tbody>`;
+        stages.forEach(stage => {
+            const psd = stage.psdSummary;
+            tableHTML += `<tr>
+                <td class="p-4 font-medium">${stage['مرحله']}</td>
+                <td>${psd.F100.toFixed(2)}</td>
+                <td>${psd.F80.toFixed(2)}</td>
+                <td>${psd.P80.toFixed(2)}</td>
+                <td>${psd.P100.toFixed(2)}</td>
+            </tr>`;
+        });
+        tableHTML += '</tbody></table>';
+        sizeAnalysisContainer.innerHTML = tableHTML;
+        sizeAnalysisCard.classList.remove('hidden');
     };
 
     const drawSchematic = (stages) => {
         const container = document.getElementById('schematic-container');
         let svgContent = '';
         const width = 800;
-        const height = stages.length * 150 + 50;
+        const height = Math.max(450, stages.length * 160 + 120);
         
         const components = {
-            bin: (x, y, label) => `<rect x="${x}" y="${y}" width="60" height="40" fill="#fff" stroke="#4b5563" stroke-width="2"/><text x="${x+30}" y="${y+25}" text-anchor="middle" font-size="12">${label}</text>`,
-            crusher: (x, y, label) => `<path d="M ${x} ${y} L ${x+60} ${y} L ${x+45} ${y+40} L ${x+15} ${y+40} Z" fill="#fff" stroke="#2563eb" stroke-width="2" /><text x="${x+30}" y="${y+25}" text-anchor="middle" font-size="12">${label}</text>`,
-            screen: (x, y, label) => `<rect x="${x}" y="${y}" width="60" height="20" fill="#fff" stroke="#10b981" stroke-width="2" transform="rotate(-15, ${x+30}, ${y+10})" /><text x="${x+30}" y="${y+40}" text-anchor="middle" font-size="12">${label}</text>`,
-            arrow: (path) => `<path d="${path}" stroke="#4b5563" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" />`
+            bin: (x, y, label, color = '#4b5563') => `<rect x="${x}" y="${y}" width="70" height="50" fill="#fff" stroke="${color}" stroke-width="2.5" rx="6"/><text x="${x+35}" y="${y+30}" text-anchor="middle" font-size="15" fill="${color}" font-family="Vazirmatn">${label}</text>`,
+            crusher: (x, y, label, color = '#2563eb', type = 'jaw') => {
+                if (type === 'jaw') return `<path d="M ${x} ${y} L ${x+70} ${y} L ${x+55} ${y+50} L ${x+15} ${y+50} Z" fill="#fff" stroke="${color}" stroke-width="2.5" /><text x="${x+35}" y="${y+30}" text-anchor="middle" font-size="13" fill="${color}" font-family="Vazirmatn">${label}</text>`;
+                else return `<path d="M ${x+35} ${y} L ${x+70} ${y+50} L ${x} ${y+50} Z" fill="#fff" stroke="${color}" stroke-width="2.5" /><text x="${x+35}" y="${y+35}" text-anchor="middle" font-size="13" fill="${color}" font-family="Vazirmatn">${label}</text>`;
+            },
+            screen: (x, y, label, color = '#10b981') => `<rect x="${x}" y="${y}" width="70" height="25" fill="#fff" stroke="${color}" stroke-width="2.5" transform="rotate(-15, ${x+35}, ${y+12.5})" /><text x="${x+35}" y="${y+18}" text-anchor="middle" font-size="13" fill="${color}" font-family="Vazirmatn">${label}</text>`,
+            arrow: (path, color = '#4b5563', width = 2) => `<path d="${path}" stroke="${color}" stroke-width="${width}" fill="none" marker-end="url(#arrowhead)" />`,
+            massLabel: (x, y, text) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" fill="#0f172a" font-family="Vazirmatn" font-weight="600">${text} tph</text>`
         };
 
-        svgContent += `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#4b5563"/></marker></defs>`;
+        svgContent += `<svg class="schematic-svg" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#4b5563"/></marker></defs><g transform="translate(50, 0)">`; 
 
-        let y_pos = 30;
+        let y_pos = 80;
+        const plantTph = stages.length > 0 ? stages[0].massBalance.feedToStageTph : 0;
         svgContent += components.bin(50, y_pos, 'خوراک');
-        
+        svgContent += components.massLabel(160, y_pos, plantTph.toFixed(1));
+
         for (let i = 0; i < stages.length; i++) {
             const stage = stages[i];
-            const isLastStage = (i === stages.length - 1);
+            const mb = stage.massBalance;
+            const colorIndex = i % stageColors.length;
+            const stageColor = stageColors[colorIndex];
             
-            // Primary Stage
             if (i === 0) {
-                svgContent += components.arrow(`M 110 ${y_pos + 20} L 180 ${y_pos + 20}`);
-                svgContent += components.screen(180, y_pos + 10, 'سرند اولیه');
-                svgContent += components.arrow(`M 240 ${y_pos + 10} L 300 ${y_pos + 10}`); // Oversize
-                svgContent += components.crusher(300, y_pos - 10, 'فکی');
-                svgContent += components.arrow(`M 210 ${y_pos + 30} L 210 ${y_pos + 80} L 390 ${y_pos + 80}`); // Undersize bypass
-                svgContent += components.arrow(`M 330 ${y_pos + 40} L 330 ${y_pos + 80} L 390 ${y_pos + 80}`); // Crusher product
-                y_pos += 120;
-            } else { // Secondary / Tertiary Stages
-                svgContent += components.arrow(`M 390 ${y_pos - 40} L 390 ${y_pos}`);
+                svgContent += components.arrow(`M 120 ${y_pos + 25} L 200 ${y_pos + 25}`, stageColor);
+                svgContent += components.screen(200, y_pos + 15, 'سرند اولیه', stageColor);
+                svgContent += components.massLabel(160, y_pos + 40, mb.feedToStageTph.toFixed(1));
+                
+                svgContent += components.arrow(`M 270 ${y_pos + 15} L 340 ${y_pos + 15}`, stageColor);
+                svgContent += components.massLabel(305, y_pos, mb.crusherFeedTph.toFixed(1));
+                svgContent += components.crusher(340, y_pos - 10, 'فکی', stageColor, 'jaw');
+                
+                svgContent += components.arrow(`M 235 ${y_pos + 40} L 235 ${y_pos + 90} L 410 ${y_pos + 90}`, stageColor, 2); // Bypass
+                svgContent += components.massLabel(255, y_pos + 105, (mb.screenBypassTph || 0).toFixed(1));
+                
+                svgContent += components.arrow(`M 375 ${y_pos + 50} L 375 ${y_pos + 90} L 410 ${y_pos + 90}`, stageColor, 2); // Crusher product
+                svgContent += components.massLabel(395, y_pos + 70, mb.crusherFeedTph.toFixed(1));
+                
+                y_pos += 140;
+            } else {
+                svgContent += components.arrow(`M 410 ${y_pos - 50} L 410 ${y_pos}`, stageColor, 2);
+                
                 if (stage['نوع مدار'] === 'بسته') {
-                    svgContent += components.screen(360, y_pos, 'سرند');
-                    svgContent += components.arrow(`M 420 ${y_pos - 5} L 480 ${y_pos - 5}`); // Oversize to crusher
-                    svgContent += components.crusher(480, y_pos - 25, 'مخروطی');
-                    svgContent += components.arrow(`M 510 ${y_pos + 25} L 510 ${y_pos + 50} L 390 ${y_pos + 50} L 390 ${y_pos + 20}`); // Recirculation
-                    svgContent += components.arrow(`M 390 ${y_pos + 20} L 390 ${y_pos + 80}`); // Undersize (product)
+                    svgContent += components.massLabel(440, y_pos - 25, (mb.totalScreenFeedTph || 0).toFixed(1));
+                    svgContent += components.screen(380, y_pos, 'سرند', stageColor);
+
+                    svgContent += components.arrow(`M 450 ${y_pos - 5} L 520 ${y_pos - 5}`, stageColor);
+                    svgContent += components.massLabel(485, y_pos - 20, mb.crusherFeedTph.toFixed(1));
+                    svgContent += components.crusher(520, y_pos - 25, 'مخروطی', stageColor, 'cone');
+                    
+                    svgContent += components.arrow(`M 555 ${y_pos + 30} L 555 ${y_pos + 60} L 380 ${y_pos + 60} L 380 ${y_pos + 20}`, stageColor, 2);
+                    svgContent += components.massLabel(470, y_pos + 75, (mb.circulatingLoadTph || 0).toFixed(1));
+
+                    svgContent += components.arrow(`M 410 ${y_pos + 25} L 410 ${y_pos + 90}`, stageColor, 2);
+                    svgContent += components.massLabel(440, y_pos + 60, mb.productTph.toFixed(1));
+
                 } else { // Open circuit
-                    svgContent += components.crusher(360, y_pos, 'مخروطی');
-                    svgContent += components.arrow(`M 390 ${y_pos + 50} L 390 ${y_pos + 80}`); // Product
+                    svgContent += components.massLabel(440, y_pos - 25, mb.crusherFeedTph.toFixed(1));
+                    svgContent += components.crusher(380, y_pos, 'مخروطی', stageColor, 'cone');
+                    svgContent += components.arrow(`M 415 ${y_pos + 60} L 415 ${y_pos + 90}`, stageColor, 2);
+                    svgContent += components.massLabel(445, y_pos + 75, mb.productTph.toFixed(1));
                 }
-                 y_pos += 120;
+                y_pos += 140;
             }
         }
         
-        svgContent += components.bin(360, y_pos, 'محصول نهایی');
-        svgContent += `</svg>`;
+        svgContent += components.bin(380, y_pos, 'محصول نهایی', stageColors[(stages.length - 1) % stageColors.length]);
+        svgContent += `</g></svg>`;
         container.innerHTML = svgContent;
     };
-    
+
     const handleAutoDesign = () => {
-        // 1. Validate all inputs
+        stagesContainer.innerHTML = '';
+        equipmentContainer.innerHTML = '';
+        stagesData = [];
+
         const dailyCapacity = parseFloat(dailyCapacityInput.value);
-        const workHours = parseFloat(workHoursInput.value);
+        const shifts = parseInt(shiftsInput.value);
+        const hoursPerShift = parseFloat(hoursPerShiftInput.value);
+        const accessibilityFactor = parseFloat(accessibilityFactorInput.value) / 100;
         const bulkDensity = parseFloat(bulkDensityInput.value);
         const wi = parseFloat(bondWorkIndexInput.value);
         const targetP100 = parseFloat(targetP100Input.value);
 
-        if (isNaN(dailyCapacity) || dailyCapacity <= 0) { alert("ظرفیت روزانه نامعتبر است."); return; }
-        if (isNaN(workHours) || workHours <= 0 || workHours > 24) { alert("ساعت کار روزانه نامعتبر است."); return; }
-        if (isNaN(bulkDensity) || bulkDensity <= 0) { alert("چگالی ظاهری نامعتبر است."); return; }
-        if (isNaN(wi) || wi <= 0) { alert("شاخص کار باند نامعتبر است."); return; }
-        if (isNaN(targetP100) || targetP100 <= 0) { alert("محصول نهایی نامعتبر است."); return; }
-
-        const rows = psdInputRows.querySelectorAll('.flex');
-        let psdData = [];
-        for (const row of rows) {
-            const inputs = row.querySelectorAll('input');
-            const size = parseFloat(inputs[0].value);
-            const percent = parseFloat(inputs[1].value);
-            if (!isNaN(size) && !isNaN(percent) && percent >= 0 && percent <= 100) {
-                psdData.push({ size, percent });
-            }
+        if (isNaN(dailyCapacity) || isNaN(shifts) || isNaN(hoursPerShift) || isNaN(accessibilityFactor) || isNaN(bulkDensity) || isNaN(wi) || isNaN(targetP100)) {
+            alert("لطفا تمام ورودی‌ها را به درستی وارد کنید."); return;
         }
-        if (psdData.length < 2) { alert("لطفاً حداقل دو نقطه معتبر برای دانه‌بندی وارد کنید."); return; }
 
-        // 2. Calculate initial F80, F_max and process parameters
-        psdData.sort((a, b) => a.size - b.size);
-        const feedSizes = psdData.map(p => p.size);
-        const feedPassingPercents = psdData.map(p => p.percent);
-        const f_max = Math.max(...feedSizes);
-        const f80_initial = interpolateValue(feedPassingPercents, feedSizes, 80);
-        if (f80_initial === null) { alert("محاسبه F80 ممکن نیست."); return; }
+        const psdRows = psdInputRows.querySelectorAll('.psd-row');
+        const psdData = Array.from(psdRows).map(row => ({
+            size: parseFloat(row.querySelector('.size-input').value),
+            percent: parseFloat(row.querySelector('.percent-input').value),
+        })).filter(d => !isNaN(d.size) && !isNaN(d.percent)).sort((a, b) => a.size - b.size);
         
+        if (psdData.length < 2) {
+            alert('لطفا حداقل دو نقطه معتبر برای دانه‌بندی وارد کنید.'); return;
+        }
+        
+        const effectiveHours = shifts * hoursPerShift * accessibilityFactor;
+        const plantTph = dailyCapacity / effectiveHours;
+        const feedSizes = psdData.map(p => p.size);
+        const feedPercents = psdData.map(p => p.percent);
+        const f_max = Math.max(...feedSizes);
+        const f80_initial = interpolateXfromY(feedSizes, feedPercents, 80);
+        
+        if (!f80_initial) {
+            alert('خطا در محاسبه F80. لطفا دانه‌بندی خوراک را بررسی کنید.'); return;
+        }
+
         const gaudin_a_cone = 0.87;
         const targetP80 = targetP100 * Math.pow(0.8, 1 / gaudin_a_cone);
 
-        if (f80_initial <= targetP80) { alert("سایز خوراک از سایز محصول نهایی کوچکتر است."); return; }
+        if (f80_initial <= targetP80) {
+            alert("سایز خوراک از سایز محصول نهایی کوچکتر است."); return;
+        }
 
-        const effectiveHours = workHours * 0.75;
-        const plantTph = dailyCapacity / effectiveHours;
-
-        // 3. Reset UI and state
-        stagesData = [];
-        stagesContainer.innerHTML = '';
-        startMessage.classList.add('hidden');
-        summaryDisplay.innerHTML = `
-            <div><span class="text-gray-500">F80 خوراک:</span> ${f80_initial.toFixed(1)} mm</div>
-            <div><span class="text-gray-500">P100 هدف:</span> ${targetP100.toFixed(1)} mm</div>
-            <div><span class="text-gray-500">ظرفیت کارخانه:</span> ${plantTph.toFixed(1)} tph</div>
-            <div><span class="text-gray-500">ساعت کار مفید:</span> ${effectiveHours.toFixed(1)} h</div>
-        `;
-        summaryDisplay.classList.remove('hidden');
+        startMessage.style.display = 'none';
         tabsContainer.classList.remove('hidden');
 
-        // 4. Automatic Design Logic
         let current_f80 = f80_initial;
+        let current_f100 = f_max;
+        let current_psd_sizes = feedSizes;
+        let current_psd_percents = feedPercents;
         let stageNum = 1;
-        let p80_from_prev_stage = f80_initial;
 
-        while (current_f80 > targetP80) {
+        while (current_f80 > targetP80 && stageNum <= 5) {
             let stageName, crusherType, reductionRatio, p80_current, circuitType, actualCrusherTph, css, gape = null;
-            
+            let massBalance = {};
+            let psdSummary = {};
+            let percentPassingCSS = 0;
+            let openCircuitCapacity_tph, closedCircuitCapacity_tph;
+
             if (stageNum === 1) {
-                stageName = 'اولیه (فکی)';
+                stageName = 'خردایش اولیه (فکی)';
                 crusherType = 'jaw';
                 reductionRatio = 3.0;
                 p80_current = current_f80 / reductionRatio;
                 circuitType = 'باز';
                 css = p80_current;
-                gape = f_max / 0.85;
+                gape = current_f100 / 0.85;
                 
-                const percentBypass = interpolateValue(feedSizes, feedPassingPercents, css) || 0;
-                actualCrusherTph = plantTph * (1 - percentBypass / 100);
-            } 
-            else {
+                percentPassingCSS = interpolateYfromX(current_psd_sizes, current_psd_percents, css) || 0;
+                actualCrusherTph = plantTph * (1 - percentPassingCSS / 100);
+
+                massBalance = {
+                    feedToStageTph: plantTph,
+                    screenBypassTph: plantTph * (percentPassingCSS / 100),
+                    crusherFeedTph: actualCrusherTph,
+                    productTph: plantTph,
+                };
+            } else {
                 stageName = `مرحله ${stageNum} (مخروطی)`;
                 crusherType = 'cone';
+                circuitType = (dailyCapacity < 250) ? 'باز' : 'بسته';
+
+                const prevStage = stagesData[stageNum - 2];
+                const prevProdSizes = prevStage.psdSummary.productPSD.map(p => p.x);
+                const prevProdPercents = prevStage.psdSummary.productPSD.map(p => p.y);
+
+                const percentAlreadyUndersize = interpolateYfromX(prevProdSizes, prevProdPercents, targetP100) || 0;
+                openCircuitCapacity_tph = plantTph * (1 - percentAlreadyUndersize / 100);
+                closedCircuitCapacity_tph = openCircuitCapacity_tph / (1 - 0.125);
                 
-                if (dailyCapacity < 250) { circuitType = 'باز'; }
-                else { circuitType = 'بسته'; }
+                if (circuitType === 'بسته') {
+                    actualCrusherTph = closedCircuitCapacity_tph;
+                    const circulatingLoadTph = closedCircuitCapacity_tph - openCircuitCapacity_tph;
+                    massBalance = {
+                        feedToStageTph: plantTph,
+                        circulatingLoadTph: circulatingLoadTph,
+                        totalScreenFeedTph: plantTph + circulatingLoadTph,
+                        crusherFeedTph: actualCrusherTph,
+                        productTph: plantTph,
+                    };
+                } else { // Open circuit
+                    actualCrusherTph = openCircuitCapacity_tph;
+                    const screenBypassTph = plantTph - openCircuitCapacity_tph;
+                    massBalance = {
+                        feedToStageTph: plantTph,
+                        screenBypassTph: screenBypassTph,
+                        crusherFeedTph: actualCrusherTph,
+                        productTph: plantTph,
+                    };
+                }
 
                 const maxPossibleNextP80 = current_f80 / 6;
                 if (maxPossibleNextP80 <= targetP80) {
@@ -526,84 +1045,95 @@ document.addEventListener('DOMContentLoaded', () => {
                     css = p80_current;
                 }
                 reductionRatio = current_f80 / p80_current;
-                
-                const prevStageProductPSD = generateGaudinPSD(p80_from_prev_stage, 0.88);
-                const prevStageSizes = prevStageProductPSD.map(p => p.x);
-                const prevStagePercents = prevStageProductPSD.map(p => p.y);
-                const prevStage_f_max = Math.max(...prevStageSizes);
-                gape = prevStage_f_max / 0.85;
-
-                const percentBypass = interpolateValue(prevStagePercents, prevStageSizes, targetP100) || 0;
-                
-                let newFeedToStage = plantTph * (1 - percentBypass / 100);
-                actualCrusherTph = newFeedToStage;
-
-                if (circuitType === 'بسته') {
-                    const circulatingLoadRatio = 0.125;
-                    actualCrusherTph = newFeedToStage / (1 - circulatingLoadRatio);
-                }
+                gape = current_f100 / 0.85;
+                percentPassingCSS = interpolateYfromX(current_psd_sizes, current_psd_percents, css) || 0;
             }
 
             const specificPower = calculateSpecificPower(wi, current_f80, p80_current);
             const correctedPower = calculateCorrectedPower(specificPower, plantTph, crusherType);
+            const gaudin_a = crusherType === 'jaw' ? 0.88 : 0.87;
+            const k = p80_current / Math.pow(0.8, 1 / gaudin_a);
+            const p100_current = k;
             
-            stagesData.push({
-                'مرحله': stageName,
-                'F80 ورودی (mm)': current_f80,
-                'P80 خروجی (mm)': p80_current,
-                'نسبت خردایش': reductionRatio, 
-                'نوع مدار': circuitType,
-                'توان (kWh/t)': specificPower, 
-                'توان موتور (kW)': correctedPower,
-                'دهانه (mm)': gape, 
-                'گلوگاه (mm)': css,
-                'crusherType': crusherType,
-                'ظرفیت ورودی (tph)': actualCrusherTph,
-                'ظرفیت ورودی (m3/h)': actualCrusherTph / bulkDensityInput.value
-            });
+            psdSummary = {
+                F100: current_f100, F80: current_f80, P80: p80_current, P100: p100_current,
+                percentBypass: percentPassingCSS,
+                productPSD: generateGaudinPSD(p80_current, gaudin_a)
+            };
             
-            p80_from_prev_stage = p80_current;
-            current_f80 = p80_current;
-            stageNum++;
-            if (stageNum > 5) { break; }
-        }
+            const stageInfo = {
+                'مرحله': stageName, 'F80 ورودی (mm)': current_f80, 'P80 خروجی (mm)': p80_current,
+                'نسبت خردایش': reductionRatio, 'نوع مدار': circuitType, 'توان (kWh/t)': specificPower, 
+                'توان موتور (kW)': correctedPower, 'دهانه (mm)': gape, 'گلوگاه (mm)': css,
+                'crusherType': crusherType, 'ظرفیت ورودی (tph)': actualCrusherTph,
+                'ظرفیت ورودی (m3/h)': actualCrusherTph / bulkDensity,
+                'massBalance': massBalance, 'psdSummary': psdSummary,
+            };
+            
+            if (crusherType === 'cone') {
+                stageInfo['ظرفیت مدار باز (tph)'] = openCircuitCapacity_tph;
+                stageInfo['ظرفیت مدار باز (m3/h)'] = openCircuitCapacity_tph / bulkDensity;
+                stageInfo['ظرفیت مدار بسته (tph)'] = closedCircuitCapacity_tph;
+                stageInfo['ظرفیت مدار بسته (m3/h)'] = closedCircuitCapacity_tph / bulkDensity;
+            }
 
-        // 5. Update UI
-        const feedChartData = psdData.map(p => ({ x: p.size, y: p.percent }));
-        setupChart(feedChartData);
-        stagesData.forEach(stage => {
-            displayStage(stage);
-            addDataToChart(stage);
+            stagesData.push(stageInfo);
+            
+            current_f80 = p80_current;
+            current_f100 = p100_current;
+            const next_psd = psdSummary.productPSD;
+            current_psd_sizes = next_psd.map(p => p.x);
+            current_psd_percents = next_psd.map(p => p.y);
+            stageNum++;
+        }
+        
+        const finalTotalPower = stagesData.reduce((sum, stage) => sum + stage['توان موتور (kW)'], 0);
+        plantCapacityElement.textContent = `${plantTph.toFixed(1)} tph`;
+        effectiveHoursElement.textContent = `${effectiveHours.toFixed(1)} h`;
+        totalPowerElement.textContent = `${finalTotalPower.toFixed(1)} kW`;
+        
+        const chartFeedData = psdData.map(p => ({x: p.size, y: p.percent}));
+        setupChart(chartFeedData);
+        displayChartSummary({ 
+            'مرحله': 'خوراک اولیه', 'گلوگاه (mm)': null, 
+            psdSummary: {F100: f_max, F80: f80_initial, P80: f80_initial, P100: f_max, percentBypass:0}
+        }, '#4b5563');
+        
+        stagesData.forEach((stage, index) => {
+            const color = stageColors[index % stageColors.length];
+            displayStage(stage, index);
+            addDataToChart(stage, color);
+            displayChartSummary(stage, color);
+            displayEquipment(stage);
         });
+
+        equipmentCard.classList.remove('hidden');
         updateReportTable();
+        displayMassBalanceTable(stagesData);
+        displaySizeAnalysisTable(stagesData);
         drawSchematic(stagesData);
     };
-    
+
     const handleDownloadCsv = () => {
-        const headers = ['مرحله', 'ظرفیت ورودی (tph)', 'ظرفیت ورودی (m3/h)', 'توان موتور (kW)', 'توان (kWh/t)', 'دهانه (mm)', 'گلوگاه (mm)', 'نوع مدار', 'F80 ورودی (mm)', 'P80 خروجی (mm)', 'نسبت خردایش'];
-        const csvRows = [headers.join(',')];
-        
-        stagesData.forEach(row => {
-            const values = headers.map(header => {
-                const val = row[header];
-                if (val === null) return '';
-                return typeof val === 'number' ? val.toFixed(4) : `"${val}"`;
+        if (stagesData.length === 0) { alert("داده‌ای برای دانلود وجود ندارد. ابتدا مدار را طراحی کنید."); return; }
+        const headers = Object.keys(stagesData[0]).filter(k => !['crusherType', 'massBalance', 'psdSummary'].includes(k));
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(",") + "\n";
+        stagesData.forEach(stage => {
+            const row = headers.map(header => {
+                const value = stage[header];
+                return (value === null || typeof value === 'undefined') ? '' : (typeof value === 'number' ? value.toFixed(2) : `"${value}"`);
             });
-            csvRows.push(values.join(','));
+            csvContent += row.join(",") + "\n";
         });
-        
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'crushing_circuit_report_final.csv';
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `crusher_report_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
-    // --- Event Listeners ---
     addRowBtn.addEventListener('click', () => addPsdRow());
     autoDesignBtn.addEventListener('click', handleAutoDesign);
     downloadCsvBtn.addEventListener('click', handleDownloadCsv);
@@ -616,20 +1146,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Initial Setup based on PDF example ---
-    // Convert weight % from PDF to cumulative passing %
-    const initialPSD = [
-        { size: 50, percent: 12 },
-        { size: 75, percent: 26 }, // 12 + 14
-        { size: 100, percent: 40 }, // 26 + 14
-        { size: 150, percent: 64 }, // 40 + 24
-        { size: 200, percent: 82 }, // 64 + 18
-        { size: 300, percent: 94 }, // 82 + 12
-        { size: 400, percent: 100 }  // 94 + 6
-    ];
-    initialPSD.forEach(point => addPsdRow(point.size, point.percent));
+    [
+        { size: 50, percent: 12 }, { size: 75, percent: 26 }, { size: 100, percent: 40 },
+        { size: 150, percent: 64 }, { size: 200, percent: 82 }, { size: 300, percent: 94 },
+        { size: 400, percent: 100 }
+    ].forEach(p => addPsdRow(p.size, p.percent));
+    updateRowIndicators();
 });
 </script>
-
 </body>
 </html>
