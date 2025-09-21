@@ -413,9 +413,38 @@
                             </div>
                         </div>
                         <div id="schematic-panel" class="tab-panel py-6">
+                            <div class="flex justify-end mb-4">
+                                <button id="edit-schematic-btn" class="btn btn-secondary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" /></svg>
+                                    ویرایش شماتیک
+                                </button>
+                                <button id="run-simulation-btn" class="btn btn-primary hidden ml-4">
+                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    اجرای شبیه سازی
+                                </button>
+                            </div>
+                            <div id="schematic-toolbar" class="hidden p-2 bg-gray-200 rounded-lg mb-4 flex gap-4" style="cursor: grab;">
+                                <div class="toolbar-item p-2 bg-white rounded-lg border" data-type="jaw" title="سنگ‌شکن فکی">
+                                    <svg width="40" height="40" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 20 0 L 60 80 L 80 80 L 80 100 L 0 100 Z" fill="#d1d5db" stroke="#4b5563" stroke-width="2"></path></svg>
+                                </div>
+                                <div class="toolbar-item p-2 bg-white rounded-lg border" data-type="cone" title="سنگ‌شکن مخروطی">
+                                    <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 0 20 L 20 0 L 60 0 L 80 20 L 80 80 L 0 80 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"></path></svg>
+                                </div>
+                                 <div class="toolbar-item p-2 bg-white rounded-lg border" data-type="screen" title="سرند">
+                                    <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M 0 0 L 80 0 L 60 80 L -20 80 Z" fill="#d1fae5" stroke="#10b981" stroke-width="2"></path></svg>
+                                </div>
+                            </div>
                             <div id="schematic-container" class="schematic-container"></div>
                         </div>
                     </div>
+                </div>
+
+                <div id="properties-panel" class="hidden fixed top-24 right-8 bg-white p-6 rounded-2xl shadow-lg w-80 border border-gray-200 z-10">
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2">مشخصات جزء</h3>
+                    <div id="properties-content" class="space-y-4">
+                        <p class="text-gray-500">برای مشاهده و ویرایش مشخصات، روی یک جزء در شماتیک کلیک کنید.</p>
+                    </div>
+                    <button id="close-properties-btn" class="btn btn-secondary mt-6 w-full">بستن</button>
                 </div>
 
                 <div id="chart-card" class="card hidden">
@@ -483,16 +512,7 @@
                 </div>
             </div>
         </main>
-
-        <div id="properties-panel" class="hidden fixed top-24 right-8 bg-white p-6 rounded-2xl shadow-lg w-80 border border-gray-200 z-10">
-            <h3 class="text-lg font-bold mb-4 border-b pb-2">مشخصات جزء</h3>
-            <div id="properties-content" class="space-y-4">
-                <p class="text-gray-500">برای مشاهده و ویرایش مشخصات، روی یک جزء در شماتیک کلیک کنید.</p>
-            </div>
-            <button id="close-properties-btn" class="btn btn-secondary mt-6 w-full">بستن</button>
-        </div>
     </div>
-
-<script src="app.js" defer></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
